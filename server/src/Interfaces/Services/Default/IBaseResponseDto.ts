@@ -1,5 +1,6 @@
 export default interface IBaseResponseDto{
    sucess: boolean;
    message: string;
-   response?: any
+   response?: any;
+   jwtToken?: string;
 }

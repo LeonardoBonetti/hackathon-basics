@@ -3,6 +3,7 @@ import ILogin from "../../Interfaces/Services/Auth/ILoginRequestDto";
 import IRegisterRequestDto from '../../Interfaces/Services/Auth/IRegisterRequestDto';
 import ILoginRequestDto from '../../Interfaces/Services/Auth/ILoginRequestDto';
 import IBaseResponseDto from '../../Interfaces/Services/Default/IBaseResponseDto';
+import jwt from 'jsonwebtoken';
 
 
 function AuthService() {
@@ -25,13 +26,21 @@ function AuthService() {
                message: "User Dont Exists"
            }
         }
-        else{
+        else
+        {
+            var token = GenerateJwt();
             return {
-                sucess: false,
-                message: "User Dont Exists",
-                response: user
+                sucess: true,
+                message: "Successful log-in",
+                response: user,
+                jwtToken: token
             }
         }
+    }
+
+    function GenerateJwt(): string {
+        var token = jwt.sign({ timestamp: new Date().getUTCMilliseconds() }, 'shhhhh', {expiresIn: 60});
+        return token;
     }
 
     return {

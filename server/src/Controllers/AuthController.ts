@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import AuthService from '../Services/Auth/AuthService';
 import ILoginRequestDto from '../Interfaces/Services/Auth/ILoginRequestDto';
 import IRegisterRequestDto from '../Interfaces/Services/Auth/IRegisterRequestDto';
+import jwt from 'jsonwebtoken';
 
 class AuthController{
     async Register (request: Request, response: Response)
