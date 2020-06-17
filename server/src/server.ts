@@ -9,16 +9,16 @@ const app = express();
 
 app.use(bearerToken());
 app.use(cors());
-app.use(function (request, response, next) {
-    try
-    {
-        jwt.verify(String(request.token), 'shhhhh');
-        next();   
-    }
-    catch(error){
-        return response.status(401).json({messsage: 'Token Expired'});
-    }
-  });
+// app.use(function (request, response, next) {
+//     try
+//     {
+//         jwt.verify(String(request.token), 'shhhhh');
+//         next();   
+//     }
+//     catch(error){
+//         return response.status(401).json({messsage: 'Token Expired'});
+//     }
+//   });
 app.use(express.json());
 app.use(routes);
 
