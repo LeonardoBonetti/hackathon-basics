@@ -2,24 +2,18 @@ import knex from '../../database/connection';
 import jwt from 'jsonwebtoken';
 import IUser from '../../Interfaces/Services/Auth/IUser';
 import IBaseResponseDto from '../../Interfaces/Services/Default/IBaseResponseDto';
-import {UserService} from './UserService'
+import userService from './UserService'
 
-export interface IAuthService {
-    register(model: IUser): Promise<IBaseResponseDto>;
-    login(model: Pick<IUser, 'email' | 'password'>): Promise<IBaseResponseDto>;
+interface IAuthService {
+    register: (model: IUser) => Promise<IBaseResponseDto>;
+    login: (model: Pick<IUser, 'email' | 'password'>) => Promise<IBaseResponseDto>;
 }
 
-export class AuthService implements IAuthService {
+function AuthService(): IAuthService
+{
+    async function register(model: IUser): Promise<IBaseResponseDto> {
 
-    readonly userService:UserService;
-
-    constructor(){
-        this.userService = new UserService();
-    }
-
-    public async register(model: IUser): Promise<IBaseResponseDto> {
-
-        if(await this.userService.userExists(model.email)){
+        if(await userService.userExists(model.email)){
             return {
                 sucess: false,
                 message: "Usuário já existe, tente outro email"
@@ -29,8 +23,8 @@ export class AuthService implements IAuthService {
         const id = (await trx('users').insert(model))[0];
         trx.commit();
 
-        const user = await this.userService.findById(id);
-        var token = this.GenerateJwt();
+        const user = await userService.findById(id);
+        var token = GenerateJwt();
 
         return {
             sucess: true,
@@ -40,12 +34,12 @@ export class AuthService implements IAuthService {
         }
     }
 
-    public async login(model: Pick<IUser, 'email' | 'password'>): Promise<IBaseResponseDto> {
+    async function login(model: Pick<IUser, 'email' | 'password'>): Promise<IBaseResponseDto> {
 
-        const user = await this.userService.findByEmail(model.email);
+        const user = await userService.findByEmail(model.email);
 
         if (user?.password == model.password) {
-            var token = this.GenerateJwt();
+            var token = GenerateJwt();
             return {
                 sucess: true,
                 message: "Login realizado com sucesso",
@@ -61,8 +55,12 @@ export class AuthService implements IAuthService {
         }
     }
 
-    private GenerateJwt(): string {
+    function GenerateJwt(): string {
         var token = jwt.sign({ timestamp: new Date().getUTCMilliseconds() }, 'shhhhh', { expiresIn: 7200 });
         return token;
     }
+
+    return { login, register}
 }
+
+export default AuthService()

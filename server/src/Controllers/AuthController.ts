@@ -1,6 +1,6 @@
 import knex from '../database/connection';
 import { Request, Response } from 'express';
-import {AuthService} from '../Services/Auth/AuthService';
+import authService from '../Services/Auth/AuthService';
 import IUser from '../Interfaces/Services/Auth/IUser';
 import IBaseResponseDto from '../Interfaces/Services/Default/IBaseResponseDto';
 
@@ -16,7 +16,7 @@ class AuthController
             password: String(request.body.password),
         }
 
-        var register = await new AuthService().register(registerDto);
+        var register = await authService.register(registerDto);
         
         if(register.sucess){
             return response.json(register);       
@@ -33,7 +33,7 @@ class AuthController
             password:  String(request.body.password),
         }
 
-        var login = await new AuthService().login(loginDto);
+        var login = await authService.login(loginDto);
 
         if(login.sucess){
             return response.json(login);       
